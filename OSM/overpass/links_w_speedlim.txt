@@ -1,0 +1,14 @@
+area(3606232940)->.searchArea;
+
+(
+node
+  ["maxspeed"]
+  ({{bbox}});
+way
+  ["maxspeed"]
+  ({{bbox}});
+);
+/*added by auto repair*/
+(._;>;);
+/*end of auto repair*/
+out body;
