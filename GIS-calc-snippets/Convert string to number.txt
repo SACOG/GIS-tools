@@ -1,0 +1,3 @@
+To convert a string to a number in GIS field calculator:
+1. Add the new field, set type to float, NOT integer, even if you ultimately want the number to be an integer.
+2. In calc tool set <numeric field> = <string field>. No need to use python's int() or float() functions.
