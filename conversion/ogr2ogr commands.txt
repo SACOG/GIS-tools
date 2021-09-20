@@ -1,0 +1,15 @@
+GENERAL COMMENT
+OSM PBF files contain ___ tables: lines, nodes, _____?.
+You can extract individual tables to SHPs, or all tables to a SQLite DB that can be opened in ArcGIS as a database.
+
+CONVERT OSM PBF TO SHP
+ogr2ogr <destination SHP path> <source PBF path> <layer type, e.g. "lines", "points"> lines
+
+CONVERT PBF TO SQLITE DB
+ogr2ogr -f SQLite <destination .sqlite path> <source PBF path>
+Example ogr2ogr -f SQLite "P:\Conveyal\ConveyalTrialGIS\SQLite\test_sqlite.sqlite" "P:\Conveyal\Networks\OSM\PBF\sacog20210907filtered.osm.pbf"
+>>NOTE THAT THE RESULTING TABLES ARE NOT READILY MAPPABLE IN ARCGIS
+
+MAKE PBF FROM SHP(s)
+
+
