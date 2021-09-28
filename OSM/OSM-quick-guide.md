@@ -40,16 +40,12 @@ OSM natively downloads as either .OSM or .PBF, the latter of which is a compress
 Below is the basic OGR2OGR structure that you enter into a command line. There are many options to include, and the complete documentation is in the [OGR2OGR documentation](https://gdal.org/programs/ogr2ogr.html#ogr2ogr)
 `ogr2ogr destination_file_path origin_file_path`
 
-### OSM > ESRI Geodatabase
+### OSM > ESRI Geodatabase and GPKG Geodatabase
 
 Going directly from OSM to an ESRI File Geodatabase (.GDB) is not easy. You either need to get a Data Interoperability license, or you need to get an old (from 2012) SDK. If possible, avoid doing this.
 
-As an alternative to using ESRI's proprietary GDB format, you can instead use GPKG. GPKGs work in ArcGIS Pro pretty much like GDBs do, and can be easily created in OGR2OGR using the following command:
+As an alternative to using ESRI's proprietary GDB format, you can instead use a [geopackage, or GPKG](https://www.geopackage.org/), database. GPKGs work in ArcGIS Pro like GDBs do, and can be easily created in OGR2OGR using the following command:
 `ogr2ogr -f "GPKG" destination_gpkg_path source_osm_path`
-
-#### GPKG Back to OSM
-
-This is still being worked out and [may not be possible](https://wiki.openstreetmap.org/wiki/Converting_map_data_between_formats)
 
 ### OSM > shapefile
 
@@ -60,3 +56,15 @@ With `layer_type` potentially being `LINES`, `POINTS`, `POLYGONS` or several oth
 
 Very similar to OSM > shapefile command:
 `ogr2ogr path_to_destination_json path_from_OSM layer_type`
+
+## Converting Back to OSM
+
+OGR2OGR does not have any nice clean commands to convert from some non-OSM file (e.g. shapefile, GeoJSON, GPKG, etc.) _to_ an OSM or PBF file.
+
+To create a new OSM file from a non-OSM file or set of files, you must acquire JOSM and install the Open Data plugin for it. Specifically[Download JOSM](https://josm.openstreetmap.de/wiki/Download). Unfortunately documentation is not good on this. We will update this section once we have more information available.
+
+# Automating OSM conversions via python
+
+Coming soon! Our goal is to provide a neater, more user-friendly version of [GDAL's Python API documentation](https://gdal.org/python/)
+
+[General table of what conversions are doable to and from OSM files](https://wiki.openstreetmap.org/wiki/Converting_map_data_between_formats)
