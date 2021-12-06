@@ -19,6 +19,20 @@ There are lots of resources with in-depth information on what OSM is, so this do
 
 Protomaps has a cool tool for specifying and downloading specific areas' OSM data
 
+# Working with OSM Data Extracts
+
+After downloading an OSM data extract, you may want to trim or filter it before working with it. E.g., remove all data except for roads, or only keep points of interest. While there are several tools out there for such tasks, [Osmosis](https://wiki.openstreetmap.org/wiki/Osmosis) is nice because it is cross-platform (Linux, Mac, and Windows) and can do a lot of different things with OSM and PBF.
+
+## Example Osmosis Commands
+
+Convert a PBF (a compressed version of a .OSM) to OSM
+
+`osmosis --read-pbf input.osm.pbf --write-xml output.osm`
+
+Extract only roads from an OSM file originally containing everything (e.g., also buildings, points of interest, administrative boundaries, etc.):
+
+`osmosis --read-xml input.osm --tf accept-ways highway=\* --write-xml output.osm`
+
 # Converting between OSM native formats and other formats
 
 ## About OSM Native Format
@@ -61,7 +75,7 @@ Very similar to OSM > shapefile command:
 
 OGR2OGR does not have any nice clean commands to convert from some non-OSM file (e.g. shapefile, GeoJSON, GPKG, etc.) _to_ an OSM or PBF file.
 
-To create a new OSM file from a non-OSM file or set of files, you must acquire JOSM and install the Open Data plugin for it. Specifically[Download JOSM](https://josm.openstreetmap.de/wiki/Download). Unfortunately documentation is not good on this. We will update this section once we have more information available.
+To create a new OSM file from a non-OSM file or set of files, you must acquire JOSM and install the Open Data plugin for it. Specifically [Download JOSM](https://josm.openstreetmap.de/wiki/Download). Unfortunately documentation is not good on this. We will update this section once we have more information available.
 
 # Automating OSM conversions via python
 
