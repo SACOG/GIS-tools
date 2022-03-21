@@ -116,8 +116,6 @@ class ORSIsochrone:
         # make temporary feature class of points at regular intervales along lines
         # FYI, time permitting, the shapely library has some options for doing this that *might* be faster than ESRI tool
         temp_pt_fc = os.path.join("memory", "TEMP_pts") 
-
-        # import pdb; pdb.set_trace()
         
         arcpy.management.GeneratePointsAlongLines(line_fc, temp_pt_fc,
                                                     "DISTANCE", 
