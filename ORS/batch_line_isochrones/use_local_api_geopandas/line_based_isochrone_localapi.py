@@ -198,6 +198,8 @@ class ORSIsochrone:
             gdf_master = gdf_master.append(gdf_batch)
         
         # 'value' is column that always gets made in ORS API call, and it has same value, so is good for dissolving all polys in GDF into single poly
+        # 3/25/2022 WARNING - Using Geopandas dissolve is way faster than ESRI's/arcpy, but it creates errors and polygons
+        # that are incorrect. Use with caution and carefully review all outputs.
         gdf_diss = gdf_master.dissolve('value') 
         # print("created gdf_diss...")
 
