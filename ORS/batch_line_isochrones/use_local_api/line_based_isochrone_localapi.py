@@ -80,28 +80,6 @@ class ORSIsochrone:
 
         return out_val
 
-    def make_isochrone(self, start_locations):
-        """Make call to the ORS API for specified parameters. Builds an isochrone
-        polygon around each (x,y) pair within the list of start_locations. Can have up to 5
-        start locations within any single call to ORS API.
-        
-        Returns: polygon as a geodataframe"""
-
-        body = {"locations":start_locations, "range":[self.isoc_range], "range_type":self.isoc_type}
-
-        headers = {
-        'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-        'Authorization': self.api_key,
-        'Content-Type': 'application/json; charset=utf-8'
-        }
-
-        call = requests.post(f'https://api.openrouteservice.org/v2/isochrones/{self.trav_mode}', 
-            json=body, headers=headers)
-
-        out_iso = gpd.GeoDataFrame.from_features(call.json()['features'])
-        
-        return out_iso
-
     def points_from_line_fc(self, line_fc, interval_ft):
         """Make a list of X/Y coordinates that the ORS API can take in and build isochrones around.
             Example: If you want to build isochrones every 1,000 feet along a 1-mile project line,
