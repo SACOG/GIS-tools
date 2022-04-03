@@ -15,6 +15,7 @@ Python Version: 3.x
 
 import os
 import datetime as dt
+import time
 from time import perf_counter
 import requests
 import geopandas as gpd
@@ -143,6 +144,7 @@ class ORSIsochrone:
         # into 1 geodatframe with all relevant isochrone polygons in it. Next step would then be dissolve all polygons.
         
         for pts_batch in line_pts_batched:
+            time.sleep(3) # ORS online API only accepts 20 hits/minute
 
             body = {"locations":pts_batch, "range":[self.isoc_range], "range_type":self.isoc_type}
 
@@ -154,47 +156,54 @@ class ORSIsochrone:
 
             call = requests.post(f'https://api.openrouteservice.org/v2/isochrones/{self.trav_mode}', json=body, headers=headers)
 
-            # import pdb; pdb.set_trace()
-            polygon_json = call.json()['features']
+            attempts = 0
+            while True:
+                try:
+                    polygon_json = call.json()['features']
+                    break
+                except:
+                    arcpy.AddMessage(call.json())
+                    time.sleep(2)
+                    attempts += 1
+                    if attempts > 10:
+                        arcpy.AddMessage(f'Made {attempts} at API call without success. Quitting...')
+                        quit()
             
             gdf_batch = gpd.GeoDataFrame.from_features(polygon_json) # FYI, as of 12/12/2021, geopandas read_file() does not work due to a fiona compatibility issue.
-            gdf_batch['dissolve_col'] = 0
             gdf_master = gdf_master.append(gdf_batch)
         
-        # 'value' is column that always gets made in ORS API call, and it has same value, so is good for dissolving all polys in GDF into single poly
-        gdf_diss = gdf_master.dissolve('value') 
-        # import pdb; pdb.set_trace()
 
         if output_file:
-            sedf = pd.DataFrame.spatial.from_geodataframe(gdf_diss)
+            ts = str(int(perf_counter()))
+            # temp_undissolved = os.path.join(arcpy.env.scratchGDB, f"TEMP_undissolved{ts}")
+            temp_undissolved = f"TEMP_undissolved{ts}"
+            sedf = pd.DataFrame.spatial.from_geodataframe(gdf_master)
             # sedf.spatial.to_featureclass(output_file) # as of 12/19/2021, this method returns empty featureclass, so using workaround function.
-            sedf_to_fc_workaround(sedf, output_file)
+            sedf_to_fc_workaround(sedf, temp_undissolved)
+            arcpy.management.Dissolve(temp_undissolved, output_fc)
         else:
-            return gdf_diss
+            return gdf_master
 
 
 if __name__ == '__main__':
 
     # =================INPUTS==========================
 
-    project_line = arcpy.GetParameterAsText(0) 
+    project_line = arcpy.GetParameterAsText(0) # user-drawn project line
     in_api_file = arcpy.GetParameterAsText(1) # txt file with single line containing the API key for ORS
     mode = arcpy.GetParameterAsText(2)  # "driving-car", "foot-walking", "cycling-regular"
     isoctype = arcpy.GetParameterAsText(3) # "time", "distance" 
     travel_range = float(arcpy.GetParameterAsText(4)) # enter time in minutes, distance in miles
 
     isoch_pts_per_mile = int(arcpy.GetParameterAsText(5)) # how close together you want the isochrones' origin points to be along the project line
-    # output_fgdb = arcpy.GetParameterAsText(6) # file geodatabase where output isochrone FC will go
 
-    # testing inputs
-    # in_api_file = input("enter file path of the ORS API text file: ")
-    # mode = "cycling-regular"  # "driving-car", "foot-walking", "cycling-regular"
+    # project_line = r'I:\Projects\Darren\TrailsAnalysis\TrailsAnalysis.gdb\TestLine_MakeWeirdIso'
+    # in_api_file = input("paste path to API key file: ")
+    # mode = "foot-walking"  # "driving-car", "foot-walking", "cycling-regular"
     # isoctype = "time" # "time", "distance" 
-    # travel_range_mins = 10 # enter time in minutes, distance in miles
+    # travel_range = 10 # enter time in minutes, distance in miles
 
-    # project_line = r'I:\Projects\Darren\TrailsAnalysis\TrailsAnalysis.gdb\TEST_MorrisonCrkSample'  # r"I:\Projects\Darren\PEP\PEP_GIS\PEP_GIS.gdb\test_sr51"  #  
-    # isoch_pts_per_mile = 7 # how close together you want the isochrones' origin points to be along the project line
-    # output_fgdb = r"I:\Projects\Darren\TrailsAnalysis\TrailsAnalysis.gdb" # file geodatabase where output isochrone FC will go
+    # isoch_pts_per_mile = 10 # how close together you want the isochrones' origin points to be along the project line
 
 
     # =================RUN SCRIPT==========================
