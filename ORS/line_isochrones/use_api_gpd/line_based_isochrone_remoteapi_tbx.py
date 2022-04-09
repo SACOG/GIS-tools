@@ -15,7 +15,7 @@ Python Version: 3.x
 
 import os
 import datetime as dt
-from time import perf_counter
+from time import perf_counter, sleep
 import requests
 import geopandas as gpd
 import pandas as pd
@@ -143,7 +143,7 @@ class ORSIsochrone:
         # into 1 geodatframe with all relevant isochrone polygons in it. Next step would then be dissolve all polygons.
         
         for pts_batch in line_pts_batched:
-
+            sleep(3)
             body = {"locations":pts_batch, "range":[self.isoc_range], "range_type":self.isoc_type}
 
             headers = {
@@ -162,11 +162,11 @@ class ORSIsochrone:
             gdf_master = gdf_master.append(gdf_batch)
         
         # 'value' is column that always gets made in ORS API call, and it has same value, so is good for dissolving all polys in GDF into single poly
-        # gdf_diss = gdf_master.dissolve('value') 
+        gdf_diss = gdf_master.dissolve() 
         # import pdb; pdb.set_trace()
 
         if output_file:
-            sedf = pd.DataFrame.spatial.from_geodataframe(gdf_master)
+            sedf = pd.DataFrame.spatial.from_geodataframe(gdf_diss)
             # sedf.spatial.to_featureclass(output_file) # as of 12/19/2021, this method returns empty featureclass, so using workaround function.
             sedf_to_fc_workaround(sedf, output_file)
         else:
