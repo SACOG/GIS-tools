@@ -5,11 +5,10 @@
 import arcpy
 
 
-in_fc = 'parcel_data_pts_2016'
-field_to_calc = 'Urbn2010'
+in_fc = 'Collisions2014to2018EJ_areatyp_tags'
 
 
-with arcpy.da.UpdateCursor(in_fc, field_names=[field_to_calc]) as ucur:
+with arcpy.da.UpdateCursor(in_fc, field_names=['EJ2018']) as ucur:
     for row in ucur:
         row[0] = 0
         ucur.updateRow(row)
