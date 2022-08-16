@@ -70,3 +70,12 @@ import geopandas as gpd
 world_gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 world_sedf = pd.DataFrame.spatial.from_featureclass(world_gdf)
 world_sedf.head()
+
+#==============PANDAS DATAFRAME WITH X/Y FIELDS <--> SPATIALLY-ENABLED DATAFRAME==================
+# convert a normal non-spatial pandas df with x/y fields into a spatially-enabled dataframe
+df = None
+df_x_col = None
+df_y_col = None
+GeoAccessor.from_xy(df, x_column=df_x_col, y_column=df_y_col)
+
+# convert SEDF into normal, non-spatial pandas df
