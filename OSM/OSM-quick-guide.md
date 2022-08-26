@@ -45,7 +45,7 @@ OSM natively downloads as either .OSM or .PBF, the latter of which is a compress
 
 [GDAL](https://gdal.org/), or GeoData Abstraction Library, is a suite of tools for working with raster and vector spatial data.
 
-[OGR2OGR](https://gdal.org/programs/ogr2ogr.html) is a command-line (or GUI) tool for converting between various types of vector spatial data, such as between OSM and SHP, OSM and JSON, etc.
+[OGR2OGR](https://gdal.org/programs/ogr2ogr.html) is a command-line (or GUI) tool for converting between various types of vector spatial data, such as between OSM and SHP, OSM and JSON, etc. OGR2OGR is a component of GDAL.
 
 ## Example OGR2OGR commands
 
@@ -70,6 +70,10 @@ With `layer_type` potentially being `LINES`, `POINTS`, `POLYGONS` or several oth
 
 Very similar to OSM > shapefile command:
 `ogr2ogr path_to_destination_json path_from_OSM layer_type`
+
+### Troubleshooting OGR2OGR
+
+* *DLL not found* error when trying to run ogr2ogr: As pf August 2022, this issue only seems to affect the GDAL installation that ships with the ArcGIS Pro python environment. If you create a new blank conda environment and use `conda install gdal=<version>` then ogr2ogr works fine. We [posted this issue to ESRI community](https://community.esri.com/t5/data-management-questions/ogr2ogr-raises-quot-dll-not-found-quot-error-when/m-p/1206780#M44181)
 
 ## Converting Back to OSM
 
