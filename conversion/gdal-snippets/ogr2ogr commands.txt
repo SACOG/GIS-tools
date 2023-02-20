@@ -2,6 +2,10 @@ GENERAL COMMENT
 OSM PBF files contain ___ tables: lines, nodes, _____?.
 You can extract individual tables to SHPs, or all tables to a SQLite DB that can be opened in ArcGIS as a database.
 
+USING ESRI PYTHON ENVIRONMENTS
+As of 2/14/2023, you will get a "missing DLL" error if trying to run OGR2OGR from a command line within an ESRI python environment.
+To workaround this, create a fresh, non-ESRI conda environment and install gdal in it.
+
 CONVERT OSM PBF TO SHP
 ogr2ogr <destination SHP path> <source PBF path> <layer type, e.g. "lines", "points"> lines
 
@@ -11,5 +15,8 @@ Example ogr2ogr -f SQLite "P:\Conveyal\ConveyalTrialGIS\SQLite\test_sqlite.sqlit
 >>NOTE THAT THE RESULTING TABLES ARE NOT READILY MAPPABLE IN ARCGIS
 
 MAKE PBF FROM SHP(s)
+***Not doable with ogr2ogr
 
 
+------SCRATCH-----------
+ogr2ogr I:\Projects\Darren\PEP\PEP_GIS\SHP\fromOSM\osm_sacogroads.shp I:\Projects\Darren\PEP\PEP_GIS\PBF\SACOG_region20230103_TRIM.osm.pbf lines
