@@ -68,7 +68,7 @@ def json_to_sedf(in_json_str, k_features='features'):
 import geopandas as gpd
 
 world_gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-world_sedf = pd.DataFrame.spatial.from_featureclass(world_gdf)
+world_sedf = pd.DataFrame.spatial.from_geodataframe(world_gdf)
 world_sedf.head()
 
 #==============PANDAS DATAFRAME WITH X/Y FIELDS <--> SPATIALLY-ENABLED DATAFRAME==================
