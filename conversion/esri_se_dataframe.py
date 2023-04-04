@@ -40,7 +40,7 @@ sedf = pd.DataFrame.spatial.from_featureclass(test_fc, usecols=cols_to_use)
 
 # export SEDF to feature class
 output_fc = r'I:\Projects\Darren\PEP\PEP_GIS\AccessibilityPolicyTesting\AccessibilityPolicyTesting.gdb\TEST_fromSEDF'
-sedf[cols_to_use].spatial.to_featureclass(output_fc)
+sedf[cols_to_use].spatial.to_featureclass(output_fc, sanitize_columns=False) # if sanitize_columns is True, then all field names will be set to lower case with underscores
 
 #============JSON STRING <--> SEDF===============================#
 def json_to_sedf(in_json_str, k_features='features'):
