@@ -71,6 +71,23 @@ world_gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 world_sedf = pd.DataFrame.spatial.from_geodataframe(world_gdf)
 world_sedf.head()
 
+def sedf2gpd(in_sedf, sedf_crs='EPSG:2226', gdf_crs='EPSG:3857'):
+    import geopandas as gpd
+    # converts ESRI spatially-enabled dataframe to geopandas geodataframe
+    print("converting to shapely geometry...")
+    in_sedf['geometry'] = in_sedf['SHAPE'].apply(lambda x: x.as_shapely)
+    # sedf_test
+    del in_sedf['SHAPE']
+
+    print("converting to geodataframe...")
+    gdf = gpd.GeoDataFrame(in_sedf, geometry='geometry')
+    gdf.crs = sedf_crs # originally import as SACOG state plan CRS
+
+    if sedf_crs != gdf_crs:
+        gdf = gdf.to_crs(gdf_crs) # need to convert to web mercator
+
+    return gdf
+
 #==============PANDAS DATAFRAME WITH X/Y FIELDS <--> SPATIALLY-ENABLED DATAFRAME==================
 # convert a normal non-spatial pandas df with x/y fields into a spatially-enabled dataframe
 df = None

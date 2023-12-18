@@ -19,4 +19,4 @@ MAKE PBF FROM SHP(s)
 
 
 ------SCRATCH-----------
-ogr2ogr I:\Projects\Darren\PEP\PEP_GIS\SHP\fromOSM\osm_sacogroads.shp I:\Projects\Darren\PEP\PEP_GIS\PBF\SACOG_region20230103_TRIM.osm.pbf lines
+ogr2ogr I:\Projects\Darren\PEP\PEP_GIS\SHP\fromOSM\OSMExcerptMidtown_viaOgr2Osm.shp I:\Projects\Darren\PEP\PEP_GIS\PBF\JSONExcerptMidtown.osm lines
