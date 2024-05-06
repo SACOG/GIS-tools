@@ -83,13 +83,9 @@ def fc2parquet(in_fc, out_pqt, field_list, crs, convert_to_centroid=False):
 
 if __name__ == '__main__':
     input_fcs = [
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\PathwayParcels_2020_DC',
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\Region_P1_2035',
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\Region_P1_2050',
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\Region_P2_2035',
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\Region_P2_2050',
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\Region_P3_2035',
-        r'I:\Projects\Indrani\Pathways_landuse_Summaries.gdb\Region_P3_2050'
+      r'Q:\SACSIM23\2020\DS\1 Parcel\parcel_prep_v4\parcel_prep_v4.gdb\Updated_Base_Year_Parcels_Sep_2023_sorted1_latest',
+      r'Q:\SACSIM23\2035\DS\1 Parcel\parcel_prep_v2\parcel_prep_v2.gdb\DS_Landuse_2035_sorted',
+      r'Q:\SACSIM23\2050\DS\1 Parcel\parcel_prep_2050_v2\parcel_prep_2050_v2.gdb\DS_Landuse_2050_sorted'
     ]
 
     output_folder = r'I:\Projects\Indrani\Pathways_Landuse_summaries_parquet'
@@ -99,6 +95,7 @@ if __name__ == '__main__':
 
     for fc in input_fcs:
         fcname = Path(fc).name
+        print(f"converting {fcname} to parquet...")
         out_pqt = Path(output_folder).joinpath(f"{fcname}.parquet")
         fc2parquet(fc, out_pqt, field_list=fields_to_load, crs="EPSG:2226",
                    convert_to_centroid=load_as_centroid)
