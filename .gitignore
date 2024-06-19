@@ -1,3 +1,6 @@
+# Authorization files with info we do not want public
+*.auth
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
