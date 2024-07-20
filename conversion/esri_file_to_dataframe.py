@@ -50,7 +50,11 @@ def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None,
         for row in cur:
             rowlist = [i for i in row]
             if include_geom:
-                geom_wkt = wkt.loads(rowlist[fields.index(f_esrishp)].WKT)
+                try:
+                    geom_wkt = wkt.loads(rowlist[fields.index(f_esrishp)].WKT)
+                except:
+                    print(f"\tWARNING: not loading link {rowlist} because it has no geometry")
+                    continue
                 rowlist[fields.index(f_esrishp)] = geom_wkt
             out_row = rowlist
             data_rows.append(out_row)  
