@@ -25,11 +25,16 @@ def convert_dtypes(in_fc, out_fc, conversion_dict):
 
     for f in sedf.columns:
         dt1 = sedf[f].dtype.name.lower()
-        if dt1 in convdict:
-            sedf[f] = sedf[f].astype(convdict[dt1])
+        if dt1 in conversion_dict:
+            sedf[f] = sedf[f].astype(conversion_dict[dt1])
             
     # export to GIS      
     print(sedf.spatial.to_featureclass(out_fc, sanitize_columns=False))
+
+    fdata = {f.name: f.type for f in arcpy.ListFields(out_fc) if f.type == 'BigInteger'}
+    if len(fdata.keys()) > 0:
+        print("WARNING: your table has big integer data types:")
+        print(fdata)
     
     
 if __name__ == '__main__':
@@ -38,8 +43,8 @@ if __name__ == '__main__':
                 'float64': 'float32'
                  }
     
-    fc_in = r'Q:\SACSIM23\Network\MTPProjectQA_GIS\MTPProjectQA_GIS.gdb\master_net_DPS_0920_2024_fix_ids'
-    fc_out = Path(in_fc).parent.joinpath(f"{Path(in_fc).name}_fixdtyp")
+    fc_in = r'Q:\SACSIM23\Network\MTPProjectQA_GIS\MTPProjectQA_GIS.gdb\SS23master_DPS20241008_1318'
+    fc_out = Path(fc_in).parent.joinpath(f"{Path(fc_in).name}_fixdtyp")
 
 
     convert_dtypes(in_fc=fc_in, out_fc=fc_out, conversion_dict=conversion)
