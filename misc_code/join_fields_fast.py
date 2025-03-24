@@ -38,7 +38,6 @@ def fast_join(fc_target, fc_target_keyfield, fc_join, fc_join_keyfield, fields_t
 
     # as needed, add field(s) to target FC if it doesn't already exist.
     print(f"Adding fields {fields_to_join} to target table {fc_target}...")
-    import pdb; pdb.set_trace()
     for jfield in fields_to_join:
         if jfield not in target_start_fields:
             ftype = jfields_dict[jfield][0]
@@ -87,12 +86,12 @@ if __name__ == '__main__':
 
     #===============INPUTS=========================
 
-    target_fc = r'I:\Projects\Darren\PPA3_GIS\PPA3Testing.gdb\parcel_polys2016'  # feature class that you want the field added to
-    jnfield_target = 'PARCELID' # join key for target feature class
+    target_fc = r'I:\Projects\Darren\PPA3_GIS\PPA3_GIS.gdb\hex_ILUT2020_63_DPSppa_web_map'  # feature class that you want the field added to
+    jnfield_target = 'GRID_ID' # join key for target feature class
 
-    fc_jn = r'I:\Projects\Darren\PPA3_GIS\PPA3Testing.gdb\parcel_pts2016_SJnBG10'  # feature class whose data you want to join to the target fc
-    jnfield_jnfc = 'PARCELID' # join key for feature class you're pulling the new field from
-    fc_jn_fields = ['GEOID10']  # list of fields in the "join" feature class that you want to append to the "target" feature class
+    fc_jn = r'I:\Projects\Darren\PPA3_GIS\PPA3_GIS.gdb\hex_ILUT2035_177_DPS_for_ppa_webmap'  # feature class whose data you want to join to the target fc
+    jnfield_jnfc = 'GRID_ID' # join key for feature class you're pulling the new field from
+    fc_jn_fields = ['DU35', 'EMPTOT35']  # list of fields in the "join" feature class that you want to append to the "target" feature class
 
     #===============RUN SCRIPT==============================
     env.overwriteOutput = True
