@@ -61,6 +61,13 @@ def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None,
 
     if include_geom:
         fields_gpd = [f for f in fields]
+
+        # if feature class already had field(s) named 'geometry', rename so they don't duplicate teh geopandas geom field name
+        dupe_geo_fields = [f for f in fields if f == 'geometry']
+        for i, gf in enumerate(dupe_geo_fields):
+            fields_gpd[fields_gpd.index(gf)] = f'{gf}{i}'
+
+        # change name of geometry field from esri geom name to gpd geom name
         fields_gpd[fields_gpd.index(f_esrishp)] = f_gpdshape
         
         out_df = gpd.GeoDataFrame(data_rows, columns=fields_gpd, geometry=f_gpdshape)
@@ -71,7 +78,22 @@ def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None,
         # dissolve to single zone so that, during spatial join, points don't erroneously tag to 2 overlapping zones.
         if dissolve and out_df.shape[0] > 1: 
             out_df = out_df.dissolve() 
+
+        # check and warn about multipart features
+        gtypes = out_df.geometry.type.drop_duplicates().values
+        has_multi = any(['multi' in gt.lower() for gt in gtypes])
+        if has_multi:
+            print(f"WARNING: Resulting GeoDataFrame from {esri_obj_path} has multipart feature types ({gtypes}). "
+                  "Use geopandas .explode() method to convert to single parts if desired.")
     else:
         out_df = pd.DataFrame(data_rows, index=index_field, columns=field_list)
 
+
+
     return out_df
+
+if __name__ == '__main__':
+    test_fc = r'I:\Projects\Darren\PPA3_GIS\PPA3_GIS.gdb\EJ_2025_final'
+
+    gdf = esri_to_df(test_fc, include_geom=True, crs_val=2226)
+    import pdb; pdb.set_trace()
