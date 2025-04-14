@@ -1,5 +1,5 @@
 """
-Name: update_sqltbl_spatial_tags.py
+Name: update_spatial_tag.py
 Purpose: for SQL Server table with x/y values, tag which records are within user-specified polygon file.
     Example 1: give tag value of 1 for all parcel points that are in an Environmental Justice polygon.
 	Example 2: can also effectively do spatial join, e.g., getting the community type each point is in based on intersection
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # NOTE - this tagval is overridden if field_map is specified below
 
     reset_to_defaults = True
-	default_val = 0 
+    default_val = 0 
 
 
     # polygons you want to associate with points in table (e.g. want to find points in these polygons and tag points accordingly)
@@ -102,10 +102,10 @@ if __name__ == '__main__':
     driver = get_odbc_driver() 
 
     # reset all field values to a default value
-	if reset_to_defaults:
-		print("resetting field to default values...")
-		qry_setdefault = f"UPDATE {tblname} SET {f_to_update} = {default_val}"
-		run_sql(driver, svrname, db_name, qry_setdefault)
+    if reset_to_defaults:
+        print("resetting field to default values...")
+        qry_setdefault = f"UPDATE {target_tbl_name} SET {f_to_update} = {default_val}"
+        run_sql(driver, svrname, db_name, qry_setdefault)
 
     print("loading polygon to associate with...")
     pclfields = [poly_id_field]
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     search_polys = esri_to_df(source_polys, include_geom=True, field_list=pclfields, crs_val=srid)
 
     # set up query for pulling and tagging points in polygon
-    pull_qry = f'SELECT {f_uid}, {f_x}, {f_y} FROM {tblname}'
+    pull_qry = f'SELECT {f_uid}, {f_x}, {f_y} FROM {target_tbl_name}'
     data_chunks = sqlqry_to_df(query_str=pull_qry, dbname=db_name, 
     servername=svrname, trustedconn='yes', chunk_size=10_000)
 
@@ -132,12 +132,12 @@ if __name__ == '__main__':
                 for tval in unique_tvals:
                     chunk_tv = tagged_pts[tagged_pts[srcfield] == tval]
                     tagged_ids = tuple(chunk_tv[f_uid].values)
-                    apply_updates(tup_id_list=tagged_ids, sql_tablename=tblname, tbl_uid_field=f_uid, 
+                    apply_updates(tup_id_list=tagged_ids, sql_tablename=target_tbl_name, tbl_uid_field=f_uid, 
                                   target_field=destfield, target_val=tval, tup_sql_conn_info=sql_conn_args)
         else:
             # simple tagging, i.e., if in polygon, then give single "yes" value (e.g. 1)
             tagged_ids = tuple(tagged_pts[f_uid].values)
-            apply_updates(tup_id_list=tagged_ids, sql_tablename=tblname, tbl_uid_field=f_uid, 
+            apply_updates(tup_id_list=tagged_ids, sql_tablename=target_tbl_name, tbl_uid_field=f_uid, 
                                   target_field=f_to_update, target_val=tagval, tup_sql_conn_info=sql_conn_args)
         
         rows_complete += chunk.shape[0]
