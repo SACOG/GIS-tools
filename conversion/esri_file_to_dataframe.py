@@ -86,7 +86,7 @@ def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None,
             print(f"WARNING: Resulting GeoDataFrame from {esri_obj_path} has multipart feature types ({gtypes}). "
                   "Use geopandas .explode() method to convert to single parts if desired.")
     else:
-        out_df = pd.DataFrame(data_rows, index=index_field, columns=field_list)
+        out_df = pd.DataFrame(data_rows, index=index_field, columns=fields)
 
 
 
