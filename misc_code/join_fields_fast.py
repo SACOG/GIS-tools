@@ -49,20 +49,32 @@ def fast_join(fc_target, fc_target_keyfield, fc_join, fc_join_keyfield, fields_t
             print(f"\t{jfield} already in {fc_target}'s fields. Will be OVERWRITTEN with joined data...")
 
 
-    cur_fields = [fc_target_keyfield] + fields_to_join
+    join_cur_fields = [fc_join_keyfield] + fields_to_join
+    
     
     join_dict = {}
     print("reading data from join table...")
-    with SearchCursor(fc_join, cur_fields) as scur:
-        for row in scur:
-            jkey = row[cur_fields.index(fc_join_keyfield)]
-            vals_to_join = [row[cur_fields.index(fname)] for fname in fields_to_join]
+    with SearchCursor(fc_join, join_cur_fields) as scur:
+        for i, row in enumerate(scur):
+            jkey = row[join_cur_fields.index(fc_join_keyfield)]
+            vals_to_join = [row[join_cur_fields.index(fname)] for fname in fields_to_join]
             join_dict[jkey] = vals_to_join
 
+            if i == 0: dt_jkey = type(jkey).__name__
+
     print("writing join data to target table...")
-    with UpdateCursor(fc_target, cur_fields) as ucur:
+    update_cur_fields = [fc_target_keyfield] + fields_to_join
+
+    def update_dtype(x, to_dtype):
+        # if the data types of the join key differ between the tables, set them to match
+        fdict = {'float': float(x), 'int': int(x), 'str': str(x)}
+        return fdict[to_dtype]
+
+    
+    with UpdateCursor(fc_target, update_cur_fields) as ucur:
         for row in ucur:
-            jkey = row[cur_fields.index(fc_join_keyfield)]
+            jkey = row[update_cur_fields.index(fc_target_keyfield)]
+            jkey = update_dtype(jkey, dt_jkey)
 
             # if a join id value is in the target table but not the join table,
             # skip the join. The values in the resulting joined column will be null for these cases.
@@ -72,6 +84,7 @@ def fast_join(fc_target, fc_target_keyfield, fc_join, fc_join_keyfield, fields_t
                 continue
 
             row_out = [jkey] + vals_to_join
+            
             row = row_out
             ucur.updateRow(row)
 
@@ -86,12 +99,12 @@ if __name__ == '__main__':
 
     #===============INPUTS=========================
 
-    target_fc = r'I:\Projects\Darren\PPA3_GIS\PPA3_GIS.gdb\hex_ILUT2020_63_DPSppa_web_map'  # feature class that you want the field added to
-    jnfield_target = 'GRID_ID' # join key for target feature class
+    target_fc = r'I:\Projects\Darren\2025BlueprintTables\Blueprint_Table_GIS\Blueprint_Table_GIS.gdb\PARCEL_MASTER_XYTableToPoint'  # feature class that you want the field added to
+    jnfield_target = 'PARCELID' # join key for target feature class
 
-    fc_jn = r'I:\Projects\Darren\PPA3_GIS\PPA3_GIS.gdb\hex_ILUT2035_177_DPS_for_ppa_webmap'  # feature class whose data you want to join to the target fc
-    jnfield_jnfc = 'GRID_ID' # join key for feature class you're pulling the new field from
-    fc_jn_fields = ['DU35', 'EMPTOT35']  # list of fields in the "join" feature class that you want to append to the "target" feature class
+    fc_jn = r'I:\Projects\Darren\2025BlueprintTables\Blueprint_Table_GIS\Blueprint_Table_GIS.gdb\pcl_trn_dists_csv'  # feature class whose data you want to join to the target fc
+    jnfield_jnfc = 'parcelid' # join key for feature class you're pulling the new field from
+    fc_jn_fields = ['dist_lbus', 'dist_lrt']  # list of fields in the "join" feature class that you want to append to the "target" feature class
 
     #===============RUN SCRIPT==============================
     env.overwriteOutput = True
