@@ -20,7 +20,7 @@ import arcpy
 from shapely import wkt
 
 def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None, 
-               crs_val=None, dissolve=False):
+               crs_val=None, dissolve=False, explode=False, sql_clause=None):
     """
     Converts ESRI file (File GDB table, SHP, or feature class) to either pandas dataframe
     or geopandas geodataframe (if it is spatial data)
@@ -46,7 +46,7 @@ def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None,
         fields = fields + [f_esrishp]
 
     data_rows = []
-    with arcpy.da.SearchCursor(esri_obj_path, fields) as cur:
+    with arcpy.da.SearchCursor(esri_obj_path, fields, where_clause=sql_clause) as cur:
         for row in cur:
             rowlist = [i for i in row]
             if include_geom:
@@ -78,6 +78,10 @@ def esri_to_df(esri_obj_path, include_geom, field_list=None, index_field=None,
         # dissolve to single zone so that, during spatial join, points don't erroneously tag to 2 overlapping zones.
         if dissolve and out_df.shape[0] > 1: 
             out_df = out_df.dissolve() 
+
+        # use to get rid of multipart geometries (optional)
+        if explode:
+            out_df = out_df.explode()
 
         # check and warn about multipart features
         gtypes = out_df.geometry.type.drop_duplicates().values
